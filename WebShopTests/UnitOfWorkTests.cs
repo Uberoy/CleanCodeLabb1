@@ -1,5 +1,9 @@
+using Microsoft.EntityFrameworkCore;
 using Moq;
+using Webshop.DataAccess.DbContext;
+using Webshop.DataAccess.Entities;
 using WebShop.Notifications;
+using WebShop.DataAccess.Repositories;
 
 namespace WebShop.Tests
 {
@@ -9,17 +13,18 @@ namespace WebShop.Tests
         public void NotifyProductAdded_CallsObserverUpdate()
         {
             // Arrange
-            var product = new Product { Id = 1, Name = "Test" };
+            var product = new Product { Id = "1", Name = "Test" };
 
             // Skapar en mock av INotificationObserver
             var mockObserver = new Mock<INotificationObserver>();
+            var mockDbContext = new Mock<IMongoDbContext>();
 
             // Skapar en instans av ProductSubject och lägger till mock-observatören
             var productSubject = new ProductSubject();
             productSubject.Attach(mockObserver.Object);
 
             // Injicerar vårt eget ProductSubject i UnitOfWork
-            var unitOfWork = new UnitOfWork.UnitOfWork(productSubject);
+            var unitOfWork = new UnitOfWork.UnitOfWork(productSubject, mockDbContext.Object);
 
             // Act
             unitOfWork.NotifyProductAdded(product);
