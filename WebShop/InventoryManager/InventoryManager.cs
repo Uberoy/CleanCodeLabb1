@@ -21,6 +21,11 @@ public class InventoryManager : IInventoryManager
         var product = await _unitOfWork.ProductRepository.GetByIdAsync(id);
         return product;
     }
+    public async Task<bool> GetProductStockStatusById(string id)
+    {
+        var product = await _unitOfWork.ProductRepository.GetByIdAsync(id);
+        return product?.Amount > 0;
+    }
 
     public async Task AddProduct(Product product)
     {
