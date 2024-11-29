@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  db:
+    image: mongo
+    restart: always
+    environment:
+            - MONGO_INITDB_ROOT_USERNAME=mongoadmin
+            - MONGO_INITDB_ROOT_PASSWORD=mongopassword
+    volumes:
+      - db-data:/data/db
+    ports:
+      - "27017:27017"
+
+  webb:
+    build:
+      context: .
+      dockerfile: WebShop/Dockerfile
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    environment:
+      ConnectionStrings__DefaultConnection: "mongodb://localhost:27017"
+    networks:
+      - app-network
+
+volumes:
+  db-data:
+
+networks:
+  app-network:
+    driver: bridge

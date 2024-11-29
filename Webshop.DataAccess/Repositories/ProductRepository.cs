@@ -16,10 +16,13 @@ public class ProductRepository : IProductRepository
 
     public async Task<Product> GetByIdAsync(string id)
     {
-        var products = await _collection.FindAsync(id);
-        var foundProduct = products.FirstOrDefault();
+        if (!ObjectId.TryParse(id, out var objectId))
+        {
+            throw new ArgumentException("Invalid ID format", nameof(id));
+        }
 
-        return foundProduct;
+        var filter = Builders<Product>.Filter.Eq(p => p.Id, objectId.ToString());
+        return await _collection.Find(filter).FirstOrDefaultAsync();
     }
 
     public async Task<IEnumerable<Product>> GetManyAsync(int start, int count)

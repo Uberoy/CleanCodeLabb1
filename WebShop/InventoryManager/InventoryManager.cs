@@ -1,5 +1,6 @@
 ﻿using WebShop.UnitOfWork;
 using Webshop.DataAccess.Entities;
+using WebShop.Exceptions;
 
 namespace WebShop.ProductManager;
 
@@ -19,6 +20,10 @@ public class InventoryManager : IInventoryManager
     public async Task<Product> GetProductById(string id)
     {
         var product = await _unitOfWork.ProductRepository.GetByIdAsync(id);
+        if (product == null)
+        {
+            throw new ProductNotFoundException($"Product with ID {id} not found.");
+        }
         return product;
     }
     public async Task<bool> GetProductStockStatusById(string id)

@@ -26,16 +26,24 @@ namespace WebShop.Controllers
             return Ok(products);
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProductById(string id)
         {
             // Behöver använda repository via Unit of Work för att hämta produkter
+            Console.WriteLine($"Received ID: {id}"); // Debug log
 
-            var product = await _inventoryManager.GetProductById(id);
+            try
+            {
+                var product = await _inventoryManager.GetProductById(id);
+                return Ok(product);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
 
-            return Ok(product);
         }
-        [HttpGet]
+        [HttpGet("{id}/stock")]
         public async Task<ActionResult<bool>> GetProductIsInStockById(string id)
         {
             // Behöver använda repository via Unit of Work för att hämta produkter

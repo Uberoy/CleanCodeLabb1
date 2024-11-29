@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Runtime.InteropServices.JavaScript;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using WebShop;
 using WebShop.Controllers;
 using Webshop.DataAccess.Entities;
 using WebShop.ProductManager;
 using WebShop.DataAccess.Repositories;
+using WebShop.Exceptions;
 using WebShop.UnitOfWork;
 
 public class InventoryManagerTests
@@ -59,6 +61,25 @@ public class InventoryManagerTests
 
         // Assert
         Assert.False(result);
+
+        _mockUnitOfWork.Verify(uow => uow.ProductRepository.GetByIdAsync(productId), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetProductStockStatusById_WithIncorrectProductId_ReturnsException()
+    {
+        string productId = "1";
+
+        _mockUnitOfWork
+            .Setup(uow => uow.ProductRepository.GetByIdAsync(productId))
+            .ThrowsAsync(new ProductNotFoundException($"Product with ID {productId} not found"));
+
+        var inventoryManager = new InventoryManager(_mockUnitOfWork.Object);
+
+        // Act & Assert
+        var exception = await Assert.ThrowsAsync<ProductNotFoundException>(
+            () => inventoryManager.GetProductStockStatusById(productId)
+        );
 
         _mockUnitOfWork.Verify(uow => uow.ProductRepository.GetByIdAsync(productId), Times.Once);
     }
