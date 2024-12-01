@@ -19,8 +19,6 @@ public class ProductControllerTests
         _mockProductRepository = new Mock<IProductRepository>();
         _mockUnitOfWork = new Mock<IUnitOfWork>();
         _mockInventoryManager = new Mock<IInventoryManager>();
-
-        // Ställ in mock av Products-egenskapen
     }
 
     [Fact]
@@ -33,9 +31,7 @@ public class ProductControllerTests
             new Product(){Id = "2", Amount = 5, Name = "Banana"},
             new Product(){Id = "3", Amount = 30, Name = "Cherry"}
         };
-
         _mockInventoryManager.Setup(manager => manager.GetAllProducts()).ReturnsAsync(testProductList);
-
         var productController = new ProductController(_mockInventoryManager.Object);
 
         //Act
@@ -53,9 +49,7 @@ public class ProductControllerTests
     {
         //Assign
         var testProduct = new Product() { Id = "1", Amount = 1, Name = "Apple" };
-
         _mockInventoryManager.Setup(manager => manager.GetProductById("1")).ReturnsAsync(testProduct);
-
         var productController = new ProductController(_mockInventoryManager.Object);
 
         //Act
@@ -73,9 +67,7 @@ public class ProductControllerTests
         //Assign
         const string productId = "1"; 
         const bool expectedStockStatus = true;
-
         _mockInventoryManager.Setup(manager => manager.GetProductStockStatusById("1")).ReturnsAsync(expectedStockStatus);
-
         var productController = new ProductController(_mockInventoryManager.Object);
 
         //Act

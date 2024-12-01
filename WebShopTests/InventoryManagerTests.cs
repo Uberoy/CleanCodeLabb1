@@ -28,11 +28,9 @@ public class InventoryManagerTests
         // Arrange
         string productId = "1";
         var testProduct = new Product { Id = productId, Amount = 10, Name = "Apple" };
-
         _mockUnitOfWork
             .Setup(uow => uow.ProductRepository.GetByIdAsync(productId))
             .ReturnsAsync(testProduct);
-
         var inventoryManager = new InventoryManager(_mockUnitOfWork.Object);
 
         // Act
@@ -49,11 +47,9 @@ public class InventoryManagerTests
         // Arrange
         string productId = "1";
         var testProduct = new Product { Id = productId, Amount = 0, Name = "Apple" };
-
         _mockUnitOfWork
             .Setup(uow => uow.ProductRepository.GetByIdAsync(productId))
             .ReturnsAsync(testProduct);
-
         var inventoryManager = new InventoryManager(_mockUnitOfWork.Object);
 
         // Act
@@ -61,7 +57,6 @@ public class InventoryManagerTests
 
         // Assert
         Assert.False(result);
-
         _mockUnitOfWork.Verify(uow => uow.ProductRepository.GetByIdAsync(productId), Times.Once);
     }
 
@@ -69,11 +64,9 @@ public class InventoryManagerTests
     public async Task GetProductStockStatusById_WithIncorrectProductId_ReturnsException()
     {
         string productId = "1";
-
         _mockUnitOfWork
             .Setup(uow => uow.ProductRepository.GetByIdAsync(productId))
             .ThrowsAsync(new ProductNotFoundException($"Product with ID {productId} not found"));
-
         var inventoryManager = new InventoryManager(_mockUnitOfWork.Object);
 
         // Act & Assert
@@ -89,10 +82,8 @@ public class InventoryManagerTests
     {
         //Arrange
         var testProduct = new Product { Id = "1", Amount = 1, Name = "Apple" };
-
         _mockUnitOfWork
             .Setup(uow => uow.ProductRepository.AddOneAsync(testProduct));
-
         var inventoryManager = new InventoryManager(_mockUnitOfWork.Object);
 
         //Act

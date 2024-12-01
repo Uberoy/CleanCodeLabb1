@@ -15,12 +15,9 @@ namespace WebShop.Controllers
             _inventoryManager = inventoryManager;
         }
 
-        // Endpoint för att hämta alla produkter
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
-            // Behöver använda repository via Unit of Work för att hämta produkter
-
             var products = await _inventoryManager.GetAllProducts();
 
             return Ok(products);
@@ -29,9 +26,6 @@ namespace WebShop.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProductById(string id)
         {
-            // Behöver använda repository via Unit of Work för att hämta produkter
-            Console.WriteLine($"Received ID: {id}"); // Debug log
-
             try
             {
                 var product = await _inventoryManager.GetProductById(id);
@@ -46,23 +40,14 @@ namespace WebShop.Controllers
         [HttpGet("{id}/stock")]
         public async Task<ActionResult<bool>> GetProductIsInStockById(string id)
         {
-            // Behöver använda repository via Unit of Work för att hämta produkter
-
             var productStockStatus = await _inventoryManager.GetProductStockStatusById(id);
 
             return Ok(productStockStatus);
         }
 
-        // Endpoint för att lägga till en ny produkt
         [HttpPost]
         public async Task<ActionResult> AddProduct(Product product)
         {
-            // Lägger till produkten via repository
-
-            // Sparar förändringar
-
-            // Notifierar observatörer om att en ny produkt har lagts till
-
             await _inventoryManager.AddProduct(product);
 
             return Ok();
