@@ -5,8 +5,8 @@ services:
     image: mongo
     restart: always
     environment:
-            - MONGO_INITDB_ROOT_USERNAME=mongoadmin
-            - MONGO_INITDB_ROOT_PASSWORD=mongopassword
+      - MONGO_INITDB_ROOT_USERNAME=mongoadmin
+      - MONGO_INITDB_ROOT_PASSWORD=mongopassword
     volumes:
       - db-data:/data/db
     ports:
@@ -21,7 +21,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      ConnectionStrings__DefaultConnection: "mongodb://localhost:27017"
+      ConnectionStrings__DefaultConnection: "mongodb://mongoadmin:mongopassword@db:27017"
     networks:
       - app-network
 
