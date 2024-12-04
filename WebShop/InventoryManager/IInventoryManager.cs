@@ -9,5 +9,4 @@ public interface IInventoryManager
     Task<bool> GetProductStockStatusById(string id);
     Task AddProduct(Product product);
     Task RemoveProductById(string id);
-    Task UpdateProductById(string id, Action<Product> updateAction);
 }

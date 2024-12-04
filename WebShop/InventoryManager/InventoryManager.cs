@@ -13,38 +13,87 @@ public class InventoryManager : IInventoryManager
     }
     public async Task<IEnumerable<Product>> GetAllProducts()
     {
-        var products = await _unitOfWork.ProductRepository.GetManyAsync(0,0);
-        return products;
+        try
+        {
+            await _unitOfWork.StartTransactionAsync();
+            var products = await _unitOfWork.ProductRepository.GetManyAsync(0, 0);
+            if (products == null)
+            {
+                throw new ProductNotFoundException($"No products found!");
+            }
+            await _unitOfWork.CommitAsync();
+            return products;
+        }
+        catch (Exception)
+        {
+            await _unitOfWork.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task<Product> GetProductById(string id)
     {
-        var product = await _unitOfWork.ProductRepository.GetByIdAsync(id);
-        if (product == null)
+        try
         {
-            throw new ProductNotFoundException($"Product with ID {id} not found.");
+            await _unitOfWork.StartTransactionAsync();
+            var product = await _unitOfWork.ProductRepository.GetByIdAsync(id);
+            if (product == null)
+            {
+                throw new ProductNotFoundException($"Product with ID {id} not found.");
+            }
+            await _unitOfWork.CommitAsync();
+            return product;
         }
-        return product;
+        catch (Exception)
+        {
+            await _unitOfWork.RollbackAsync();
+            throw;
+        }
     }
     public async Task<bool> GetProductStockStatusById(string id)
     {
-        var product = await _unitOfWork.ProductRepository.GetByIdAsync(id);
-        return product?.Amount > 0;
+        try
+        {
+            await _unitOfWork.StartTransactionAsync();
+            var product = await _unitOfWork.ProductRepository.GetByIdAsync(id);
+            await _unitOfWork.CommitAsync();
+            return product?.Amount > 0;
+        }
+        catch (Exception)
+        {
+            await _unitOfWork.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task AddProduct(Product product)
     {
-        await _unitOfWork.ProductRepository.AddOneAsync(product);
-        _unitOfWork.NotifyProductAdded(product);
+        try
+        {
+            await _unitOfWork.StartTransactionAsync();
+            await _unitOfWork.ProductRepository.AddOneAsync(product);
+            _unitOfWork.NotifyProductAdded(product);
+            await _unitOfWork.CommitAsync();
+        }
+        catch (Exception)
+        {
+            await _unitOfWork.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task RemoveProductById(string id)
     {
-        await _unitOfWork.ProductRepository.DeleteOneAsync(id);
-    }
-
-    public async Task UpdateProductById(string id, Action<Product> updateAction)
-    {
-        throw new NotImplementedException();
+        try
+        {
+            await _unitOfWork.StartTransactionAsync();
+            await _unitOfWork.ProductRepository.DeleteOneAsync(id);
+            await _unitOfWork.CommitAsync();
+        }
+        catch (Exception)
+        {
+            await _unitOfWork.RollbackAsync();
+            throw;
+        }
     }
 }

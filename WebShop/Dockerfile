@@ -6,7 +6,7 @@ WORKDIR /src
 COPY ["WebShop/WebShop.csproj", "./WebShop/"]
 COPY ["WebShop.CommonInterfaces/WebShop.CommonInterfaces.csproj", "./WebShop.CommonInterfaces/"]
 COPY ["Webshop.DataAccess/Webshop.DataAccess.csproj", "./Webshop.DataAccess/"]
-COPY ["WebShopTests/WebShopTests.csproj", "./WebShopTests/"]
+COPY ["WebShop.Tests/WebShop.Tests.csproj", "./WebShop.Tests/"]
 
 # Restore dependencies
 RUN dotnet restore "WebShop/WebShop.csproj"
@@ -19,7 +19,7 @@ RUN dotnet build "WebShop/WebShop.csproj" -c Release
 
 # Stage 2: Run tests
 FROM build AS test
-WORKDIR /src/WebShopTests
+WORKDIR /src/WebShop.Tests
 
 # Run tests and ensure they pass
 RUN dotnet test "WebShopTests.csproj" --no-build --logger:trx --results-directory /src/TestResults
